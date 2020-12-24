@@ -1,8 +1,7 @@
 package com.example.advancedclipboardandroid
 
-import org.junit.Test
-
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -10,8 +9,21 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
+    private var verification = LoginVerification()
+
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun loginSuccessful_whenCorrectCredentials() {
+        assertTrue(verification.verify( "test@test.com",  "123"))
+    }
+
+    @Test
+    fun loginFail_whenCorrectCredentials() {
+        assertFalse(verification.verify( "test@tesasdt.com",  "1asd23"))
     }
 }

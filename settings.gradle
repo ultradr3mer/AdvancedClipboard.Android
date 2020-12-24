@@ -1,2 +1,4 @@
+include ':mylibrary'
+include ':loginverification'
 include ':app'
 rootProject.name = "AdvancedClipboard.Android"
