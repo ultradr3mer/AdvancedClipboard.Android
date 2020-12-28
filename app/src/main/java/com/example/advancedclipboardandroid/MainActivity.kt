@@ -1,5 +1,6 @@
 package com.example.advancedclipboardandroid
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -28,7 +29,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         if(loginVerification.verify(email.text.toString(), password.text.toString())) {
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show()
+            val activityIntent = Intent(this, Browse::class.java)
+            startActivity(activityIntent)
         } else {
             Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show()
         }
