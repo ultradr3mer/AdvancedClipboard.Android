@@ -11,8 +11,13 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import io.swagger.client.ApiClient
+import io.swagger.client.api.ClipboardApi
+import io.swagger.client.model.ClipboardPostPlainTextData
 import kotlinx.android.synthetic.main.activity_browse.*
 import kotlinx.android.synthetic.main.content_browse.*
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 class BrowseActivity : AppCompatActivity() {
 
@@ -26,22 +31,52 @@ class BrowseActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
+        val clipboardApi = ApiClient("http")
+            .setCredentials("ClaraOriginal", "")
+            .createService(ClipboardApi::class.java)
+
         this.adapter = ItemAdapter(
             this,
             Repository.items
         )
+
         recycler_view.adapter = adapter
 
+        clipboardApi.clipboardGet()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread(), false)
+            .subscribe({ mutableList ->
+                mutableList.forEach { item ->
+                    Repository.items.add(ClipboardItem(item.plainTextContent.toString(), null))
+                }
+                adapter.notifyDataSetChanged()
+            }, { error ->
+                Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
+                    .setAction("Paste", null).show()
+            })
+
         add.setOnClickListener { view ->
-            if(!this.checkIfClipboardHasText())
-            {
+            if (!this.checkIfClipboardHasText()) {
                 Snackbar.make(view, "Please copy some text.", Snackbar.LENGTH_LONG)
                     .setAction("Paste", null).show()
                 return@setOnClickListener
             }
 
-            val item = clipboard.primaryClip!!.getItemAt(0)
-            Repository.items.add(ClipboardItem(item.text.toString(), null))
+            val clipboardText = clipboard.primaryClip!!.getItemAt(0).text.toString()
+            val postData = ClipboardPostPlainTextData()
+            postData.content = clipboardText
+            clipboardApi.clipboardPostPlainTextPost(postData)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), false)
+                .subscribe({ result ->
+                    Repository.items.add(ClipboardItem(clipboardText, null))
+                    adapter.notifyDataSetChanged()
+                }, { error ->
+                    Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
+                        .setAction("Paste", null).show()
+                })
+
+
             adapter.notifyDataSetChanged()
         }
 
@@ -64,13 +99,12 @@ class BrowseActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_browse, menu)
-        return  true
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.action_search ->
-            {
+        return when (item.itemId) {
+            R.id.action_search -> {
                 val activityIntent = Intent(this, SearchActivity::class.java)
                 startActivity(activityIntent)
                 true
@@ -100,7 +134,7 @@ class BrowseActivity : AppCompatActivity() {
             val stream = this.contentResolver.openInputStream(uri!!)
             var drawable = Drawable.createFromStream(stream, uri.toString())
 
-            Repository.items.add(ClipboardItem("",drawable))
+            Repository.items.add(ClipboardItem("", drawable))
             adapter.notifyDataSetChanged()
         }
     }

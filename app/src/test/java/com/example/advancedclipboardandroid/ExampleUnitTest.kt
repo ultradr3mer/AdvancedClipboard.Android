@@ -1,5 +1,7 @@
 package com.example.advancedclipboardandroid
 
+import io.swagger.client.ApiClient
+import io.swagger.client.api.ClipboardApi
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -25,5 +27,29 @@ class ExampleUnitTest {
     @Test
     fun loginFail_whenCorrectCredentials() {
         assertFalse(verification.verify( "test@tesasdt.com",  "1asd23"))
+    }
+
+    @Test
+    fun getClipboardFromLocalhost()
+    {
+        val clipboardApi = ApiClient("http")
+            .setCredentials("ClaraOriginal", "TestPassword123!")
+            .createService(ClipboardApi::class.java)
+
+        var gotItems = false;
+        var gotError = false;
+
+        clipboardApi.clipboardGet().subscribe({ mutableList ->
+            mutableList.forEach { item ->
+                gotItems = true;
+            }
+        }, { error ->
+            run {
+                gotError = true;
+            }
+        })
+
+        assertTrue(gotItems)
+        assertFalse(gotError)
     }
 }
