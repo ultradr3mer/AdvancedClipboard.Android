@@ -42,6 +42,7 @@ class BrowseActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread(), false)
             .subscribe({ mutableList ->
+                Repository.items.clear();
                 mutableList.forEach { item ->
                     Repository.items.add(ClipboardItem(item.plainTextContent.toString(), null))
                 }

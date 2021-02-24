@@ -1,6 +1,8 @@
 package com.example.advancedclipboardandroid
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -14,7 +16,8 @@ import rx.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-   private val loginVerification = LoginVerification()
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private val loginVerification = LoginVerification()
 
     private lateinit var username: EditText
     private lateinit var password: EditText
@@ -29,9 +32,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         login = findViewById(R.id.button)
 
         login.setOnClickListener(this)
+
+        val sp = getSharedPreferences("Login", Context.MODE_PRIVATE)
+        sharedPreferencesEditor = sp.edit()
+
+        username.setText(sp.getString(getString(R.string.User), ""))
+        password.setText(sp.getString(getString(R.string.Pass), ""))
+
+        if(username.text.any()) {
+            TryLogin()
+        }
     }
 
     override fun onClick(v: View?) {
+        TryLogin()
+    }
+
+    private fun TryLogin() {
         val api = ApiClient("http")
             .setCredentials(username.text.toString(), password.text.toString())
             .createService(ClipboardApi::class.java)
@@ -40,6 +57,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread(), false)
             .subscribe({ _ ->
+                sharedPreferencesEditor.putString(
+                    getString(R.string.User),
+                    username.text.toString()
+                )
+                sharedPreferencesEditor.putString(
+                    getString(R.string.Pass),
+                    password.text.toString()
+                )
+                sharedPreferencesEditor.commit()
                 Repository.clipboardApi = api
                 val activityIntent = Intent(this, BrowseActivity::class.java)
                 startActivity(activityIntent)
