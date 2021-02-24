@@ -31,6 +31,18 @@ public class ClipboardApiTest {
      * 
      */
     @Test
+    public void clipboardAuthorizeGetTest() {
+        // Void response = api.clipboardAuthorizeGet();
+
+        // TODO: test validations
+    }
+
+    /**
+     * 
+     *
+     * 
+     */
+    @Test
     public void clipboardGetTest() {
         // List<ClipboardGetData> response = api.clipboardGet();
 

@@ -35,4 +35,18 @@ public class SignupApiTest {
 
         // TODO: test validations
     }
+
+    /**
+     * 
+     *
+     * 
+     */
+    @Test
+    public void signupTestAuthorizeGetTest() {
+        String username = null;
+        String password = null;
+        // Void response = api.signupTestAuthorizeGet(username, password);
+
+        // TODO: test validations
+    }
 }

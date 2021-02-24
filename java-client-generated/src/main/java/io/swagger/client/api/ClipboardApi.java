@@ -21,6 +21,15 @@ public interface ClipboardApi {
   /**
    * 
    * 
+   * @return Call&lt;Void&gt;
+   */
+  @GET("Clipboard/Authorize")
+  Observable<Void> clipboardAuthorizeGet();
+    
+
+  /**
+   * 
+   * 
    * @return Call&lt;List&lt;ClipboardGetData&gt;&gt;
    */
   @GET("Clipboard")

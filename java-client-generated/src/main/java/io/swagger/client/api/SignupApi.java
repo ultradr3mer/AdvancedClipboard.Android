@@ -30,4 +30,16 @@ public interface SignupApi {
                     @retrofit2.http.Body SignupPostData body    
   );
 
+  /**
+   * 
+   * 
+   * @param username  (optional)
+   * @param password  (optional)
+   * @return Call&lt;Void&gt;
+   */
+  @GET("Signup/TestAuthorize")
+  Observable<Void> signupTestAuthorizeGet(
+        @retrofit2.http.Query("username") String username                ,     @retrofit2.http.Query("password") String password                
+  );
+
 }

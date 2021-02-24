@@ -42,7 +42,7 @@ if(hasProperty('target') && target == 'android') {
                 def outputFile = output.outputFile
                 if (outputFile != null && outputFile.name.endsWith('.aar')) {
                     def fileName = "${project.name}-${variant.baseName}-${version}.aar"
-                    output.outputFileName = fileName
+                    output.outputFile = new File(outputFile.parent, fileName)
                 }
             }
         }

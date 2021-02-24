@@ -1,8 +1,10 @@
 package com.example.advancedclipboardandroid
 
 import android.graphics.drawable.Drawable
+import io.swagger.client.api.ClipboardApi
 
 object Repository {
+    var clipboardApi: ClipboardApi? = null
     val items = ArrayList<ClipboardItem>()
 }
 

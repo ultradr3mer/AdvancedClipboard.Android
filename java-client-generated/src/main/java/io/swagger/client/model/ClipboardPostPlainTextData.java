@@ -25,7 +25,7 @@ import java.io.IOException;
  * ClipboardPostPlainTextData
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-01-09T09:04:38.769Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-02-24T15:57:51.960Z[GMT]")
 public class ClipboardPostPlainTextData {
   @SerializedName("content")
   private String content = null;

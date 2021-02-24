@@ -11,8 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import io.swagger.client.ApiClient
-import io.swagger.client.api.ClipboardApi
 import io.swagger.client.model.ClipboardPostPlainTextData
 import kotlinx.android.synthetic.main.activity_browse.*
 import kotlinx.android.synthetic.main.content_browse.*
@@ -31,9 +29,7 @@ class BrowseActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-        val clipboardApi = ApiClient("http")
-            .setCredentials("ClaraOriginal", "")
-            .createService(ClipboardApi::class.java)
+        val clipboardApi = Repository.clipboardApi!!
 
         this.adapter = ItemAdapter(
             this,

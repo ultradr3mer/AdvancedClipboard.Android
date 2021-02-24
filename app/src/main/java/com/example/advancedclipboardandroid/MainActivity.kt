@@ -7,12 +7,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import io.swagger.client.ApiClient
+import io.swagger.client.api.ClipboardApi
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
    private val loginVerification = LoginVerification()
 
-    private lateinit var email: EditText
+    private lateinit var username: EditText
     private lateinit var password: EditText
     private lateinit var login: Button
 
@@ -20,7 +24,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        email = findViewById(R.id.editTextTextEmailAddress)
+        username = findViewById(R.id.editTextTextUsername)
         password = findViewById(R.id.editTextTextPassword)
         login = findViewById(R.id.button)
 
@@ -28,11 +32,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if(loginVerification.verify(email.text.toString(), password.text.toString())) {
-            val activityIntent = Intent(this, BrowseActivity::class.java)
-            startActivity(activityIntent)
-        } else {
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show()
-        }
+        val api = ApiClient("http")
+            .setCredentials(username.text.toString(), password.text.toString())
+            .createService(ClipboardApi::class.java)
+
+        api.clipboardAuthorizeGet()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread(), false)
+            .subscribe({ _ ->
+                Repository.clipboardApi = api
+                val activityIntent = Intent(this, BrowseActivity::class.java)
+                startActivity(activityIntent)
+            }, { error ->
+                Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show()
+            })
     }
 }
