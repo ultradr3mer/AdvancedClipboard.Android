@@ -9,8 +9,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import io.swagger.client.api.ClipboardApi
 import io.swagger.client.model.ClipboardPostPlainTextData
 import kotlinx.android.synthetic.main.activity_browse.*
 import kotlinx.android.synthetic.main.content_browse.*
@@ -21,6 +24,8 @@ class BrowseActivity : AppCompatActivity() {
 
     private lateinit var clipboard: ClipboardManager
     private lateinit var adapter: ItemAdapter
+    private lateinit var clipboardApi: ClipboardApi
+    private lateinit var swipeContainer: SwipeRefreshLayout
     val PICK_IMAGE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +34,7 @@ class BrowseActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-        val clipboardApi = Repository.clipboardApi!!
+        clipboardApi = Repository.clipboardApi!!
 
         this.adapter = ItemAdapter(
             this,
@@ -38,19 +43,7 @@ class BrowseActivity : AppCompatActivity() {
 
         recycler_view.adapter = adapter
 
-        clipboardApi.clipboardGet()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread(), false)
-            .subscribe({ mutableList ->
-                Repository.items.clear();
-                mutableList.forEach { item ->
-                    Repository.items.add(ClipboardItem(item.plainTextContent.toString(), null))
-                }
-                adapter.notifyDataSetChanged()
-            }, { error ->
-                Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
-                    .setAction("Paste", null).show()
-            })
+        loadItems()
 
         add.setOnClickListener { view ->
             if (!this.checkIfClipboardHasText()) {
@@ -92,6 +85,30 @@ class BrowseActivity : AppCompatActivity() {
 
             startActivityForResult(chooserIntent, PICK_IMAGE)
         }
+
+
+        swipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        swipeContainer.setOnRefreshListener({
+            loadItems()
+        })
+    }
+
+    private fun loadItems() {
+        clipboardApi.clipboardGet()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread(), false)
+            .subscribe({ mutableList ->
+                Repository.items.clear();
+                mutableList.forEach { item ->
+                    Repository.items.add(0, ClipboardItem(item.plainTextContent.toString(), null))
+                }
+                adapter.notifyDataSetChanged();
+                swipeContainer.isRefreshing = false;
+            }, { error ->
+                Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
+                    .setAction("Paste", null).show()
+                swipeContainer.isRefreshing = false;
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
