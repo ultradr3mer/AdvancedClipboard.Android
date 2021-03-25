@@ -10,7 +10,7 @@ import okhttp3.ResponseBody;
 
 import io.swagger.client.model.ClipboardGetData;
 import io.swagger.client.model.ClipboardPostPlainTextData;
-import io.swagger.client.model.ClipboardPostResultData;
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,14 +39,27 @@ public interface ClipboardApi {
   /**
    * 
    * 
+   * @param file  (optional)
+   * @param fileExtension  (optional)
+   * @return Call&lt;ClipboardGetData&gt;
+   */
+  @retrofit2.http.Multipart
+  @POST("Clipboard/PostImage")
+  Observable<ClipboardGetData> clipboardPostImagePost(
+                        @retrofit2.http.Part("file\"; filename=\"file") RequestBody file,     @retrofit2.http.Query("fileExtension") String fileExtension                
+  );
+
+  /**
+   * 
+   * 
    * @param body  (optional)
-   * @return Call&lt;ClipboardPostResultData&gt;
+   * @return Call&lt;ClipboardGetData&gt;
    */
   @Headers({
     "Content-Type:application/json"
   })
   @POST("Clipboard/PostPlainText")
-  Observable<ClipboardPostResultData> clipboardPostPlainTextPost(
+  Observable<ClipboardGetData> clipboardPostPlainTextPost(
                     @retrofit2.http.Body ClipboardPostPlainTextData body    
   );
 

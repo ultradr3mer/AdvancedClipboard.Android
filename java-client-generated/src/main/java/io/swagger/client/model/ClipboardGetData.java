@@ -26,13 +26,28 @@ import java.util.UUID;
  * ClipboardGetData
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-02-24T15:57:51.960Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-03-18T07:58:16.953Z[GMT]")
 public class ClipboardGetData {
+  @SerializedName("contentTypeId")
+  private UUID contentTypeId = null;
+
   @SerializedName("id")
   private UUID id = null;
 
-  @SerializedName("plainTextContent")
-  private Object plainTextContent = null;
+  @SerializedName("imageContentUrl")
+  private String imageContentUrl = null;
+
+  @SerializedName("textContent")
+  private String textContent = null;
+
+   /**
+   * Get contentTypeId
+   * @return contentTypeId
+  **/
+  @Schema(description = "")
+  public UUID getContentTypeId() {
+    return contentTypeId;
+  }
 
    /**
    * Get id
@@ -44,12 +59,21 @@ public class ClipboardGetData {
   }
 
    /**
-   * Get plainTextContent
-   * @return plainTextContent
+   * Get imageContentUrl
+   * @return imageContentUrl
   **/
   @Schema(description = "")
-  public Object getPlainTextContent() {
-    return plainTextContent;
+  public String getImageContentUrl() {
+    return imageContentUrl;
+  }
+
+   /**
+   * Get textContent
+   * @return textContent
+  **/
+  @Schema(description = "")
+  public String getTextContent() {
+    return textContent;
   }
 
 
@@ -62,13 +86,15 @@ public class ClipboardGetData {
       return false;
     }
     ClipboardGetData clipboardGetData = (ClipboardGetData) o;
-    return Objects.equals(this.id, clipboardGetData.id) &&
-        Objects.equals(this.plainTextContent, clipboardGetData.plainTextContent);
+    return Objects.equals(this.contentTypeId, clipboardGetData.contentTypeId) &&
+        Objects.equals(this.id, clipboardGetData.id) &&
+        Objects.equals(this.imageContentUrl, clipboardGetData.imageContentUrl) &&
+        Objects.equals(this.textContent, clipboardGetData.textContent);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, plainTextContent);
+    return Objects.hash(contentTypeId, id, imageContentUrl, textContent);
   }
 
 
@@ -77,8 +103,10 @@ public class ClipboardGetData {
     StringBuilder sb = new StringBuilder();
     sb.append("class ClipboardGetData {\n");
     
+    sb.append("    contentTypeId: ").append(toIndentedString(contentTypeId)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    plainTextContent: ").append(toIndentedString(plainTextContent)).append("\n");
+    sb.append("    imageContentUrl: ").append(toIndentedString(imageContentUrl)).append("\n");
+    sb.append("    textContent: ").append(toIndentedString(textContent)).append("\n");
     sb.append("}");
     return sb.toString();
   }

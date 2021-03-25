@@ -25,7 +25,7 @@ import java.io.IOException;
  * SignupPostData
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-02-24T15:57:51.960Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-03-18T07:58:16.953Z[GMT]")
 public class SignupPostData {
   @SerializedName("password")
   private String password = null;

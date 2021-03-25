@@ -3,7 +3,7 @@ package io.swagger.client.api;
 import io.swagger.client.ApiClient;
 import io.swagger.client.model.ClipboardGetData;
 import io.swagger.client.model.ClipboardPostPlainTextData;
-import io.swagger.client.model.ClipboardPostResultData;
+import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,9 +55,23 @@ public class ClipboardApiTest {
      * 
      */
     @Test
+    public void clipboardPostImagePostTest() {
+        File file = null;
+        String fileExtension = null;
+        // ClipboardGetData response = api.clipboardPostImagePost(file, fileExtension);
+
+        // TODO: test validations
+    }
+
+    /**
+     * 
+     *
+     * 
+     */
+    @Test
     public void clipboardPostPlainTextPostTest() {
         ClipboardPostPlainTextData body = null;
-        // ClipboardPostResultData response = api.clipboardPostPlainTextPost(body);
+        // ClipboardGetData response = api.clipboardPostPlainTextPost(body);
 
         // TODO: test validations
     }

@@ -59,7 +59,7 @@ class BrowseActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), false)
                 .subscribe({ result ->
-                    Repository.items.add(ClipboardItem(clipboardText, null))
+                    Repository.items.add(ClipboardItem(clipboardText, ""))
                     adapter.notifyDataSetChanged()
                 }, { error ->
                     Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
@@ -86,7 +86,6 @@ class BrowseActivity : AppCompatActivity() {
             startActivityForResult(chooserIntent, PICK_IMAGE)
         }
 
-
         swipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener({
             loadItems()
@@ -100,7 +99,7 @@ class BrowseActivity : AppCompatActivity() {
             .subscribe({ mutableList ->
                 Repository.items.clear();
                 mutableList.forEach { item ->
-                    Repository.items.add(0, ClipboardItem(item.plainTextContent.toString(), null))
+                    Repository.items.add(0, ClipboardItem(item.textContent, item.imageContentUrl))
                 }
                 adapter.notifyDataSetChanged();
                 swipeContainer.isRefreshing = false;
@@ -148,7 +147,7 @@ class BrowseActivity : AppCompatActivity() {
             val stream = this.contentResolver.openInputStream(uri!!)
             var drawable = Drawable.createFromStream(stream, uri.toString())
 
-            Repository.items.add(ClipboardItem("", drawable))
+//            Repository.items.add(ClipboardItem("", drawable))
             adapter.notifyDataSetChanged()
         }
     }

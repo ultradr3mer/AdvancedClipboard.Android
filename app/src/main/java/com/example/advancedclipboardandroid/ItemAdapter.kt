@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 
 class ItemAdapter(
@@ -19,7 +20,7 @@ class ItemAdapter(
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just an Affirmation object.
-    class ItemViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+    class ItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.item_title)
         val imageView: ImageView = view.findViewById(R.id.item_image)
         val ListItem: ListItem = view as ListItem
@@ -42,8 +43,20 @@ class ItemAdapter(
         val item = dataset[position]
         holder.textView.visibility = if (TextUtils.isEmpty(item.name)) View.GONE else View.VISIBLE
         holder.textView.text = item.name
-        holder.imageView.visibility = if (item.image == null) View.GONE else View.VISIBLE
-        holder.imageView.setImageDrawable(item.image)
+
+        if (TextUtils.isEmpty(item.imageUrl))
+        {
+            holder.imageView.visibility = View.GONE
+        }
+        else
+        {
+            holder.imageView.visibility = View.VISIBLE
+            val fullUrl = FileTokenData.createUrl(item.imageUrl.toString());
+            Glide.with(holder.view)
+                 .load(fullUrl)
+                 .into(holder.imageView);
+        }
+
         holder.ListItem.item = item
     }
 

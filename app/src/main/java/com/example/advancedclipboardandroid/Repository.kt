@@ -1,6 +1,5 @@
 package com.example.advancedclipboardandroid
 
-import android.graphics.drawable.Drawable
 import io.swagger.client.api.ClipboardApi
 
 object Repository {
@@ -8,7 +7,7 @@ object Repository {
     val items = ArrayList<ClipboardItem>()
 }
 
-data class ClipboardItem(val name: String?, val image: Drawable?) {
+data class ClipboardItem(val name: String?, val imageUrl: String?) {
     override fun toString(): String {
         return name.toString()
     }
