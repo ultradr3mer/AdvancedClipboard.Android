@@ -99,7 +99,7 @@ class BrowseActivity : AppCompatActivity() {
             .subscribe({ mutableList ->
                 Repository.items.clear();
                 mutableList.forEach { item ->
-                    Repository.items.add(0, ClipboardItem(item.textContent, item.imageContentUrl))
+                    Repository.items.add(0, ClipboardItem(item.textContent, FileTokenData.createUrl(item.imageContentUrl)))
                 }
                 adapter.notifyDataSetChanged();
                 swipeContainer.isRefreshing = false;

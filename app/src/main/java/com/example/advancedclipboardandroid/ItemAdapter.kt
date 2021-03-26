@@ -51,9 +51,8 @@ class ItemAdapter(
         else
         {
             holder.imageView.visibility = View.VISIBLE
-            val fullUrl = FileTokenData.createUrl(item.imageUrl.toString());
             Glide.with(holder.view)
-                 .load(fullUrl)
+                 .load(item.imageUrl.toString())
                  .into(holder.imageView);
         }
 
