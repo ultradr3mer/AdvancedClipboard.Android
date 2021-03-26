@@ -18,6 +18,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -78,7 +79,10 @@ class ListItem : MaterialCardView, RequestListener<Bitmap> {
         target: Target<Bitmap>?,
         isFirstResource: Boolean
     ): Boolean {
-        TODO("Not yet implemented")
+        Snackbar.make(this, e!!.message!!, Snackbar.LENGTH_LONG)
+            .setAction("Paste", null).show()
+
+        return  true;
     }
 
     override fun onResourceReady(
