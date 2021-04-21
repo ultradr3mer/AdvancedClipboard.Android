@@ -4,7 +4,8 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
@@ -14,11 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import io.swagger.client.api.ClipboardApi
+import io.swagger.client.model.ClipboardGetData
 import io.swagger.client.model.ClipboardPostPlainTextData
 import kotlinx.android.synthetic.main.activity_browse.*
 import kotlinx.android.synthetic.main.content_browse.*
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.io.ByteArrayOutputStream
 
 class BrowseActivity : AppCompatActivity() {
 
@@ -59,15 +64,12 @@ class BrowseActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), false)
                 .subscribe({ result ->
-                    Repository.items.add(ClipboardItem(clipboardText, ""))
+                    insertNewItem(result)
                     adapter.notifyDataSetChanged()
                 }, { error ->
                     Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
                         .setAction("Paste", null).show()
                 })
-
-
-            adapter.notifyDataSetChanged()
         }
 
         image.setOnClickListener { view ->
@@ -92,6 +94,17 @@ class BrowseActivity : AppCompatActivity() {
         })
     }
 
+    private fun insertNewItem(item: ClipboardGetData) {
+        Repository.items.add(
+            0, ClipboardItem(
+                item.contentTypeId,
+                item.textContent,
+                FileTokenData.createUrl(item.fileContentUrl),
+                item.fileName
+            )
+        )
+    }
+
     private fun loadItems() {
         clipboardApi.clipboardGet()
             .subscribeOn(Schedulers.io())
@@ -99,7 +112,7 @@ class BrowseActivity : AppCompatActivity() {
             .subscribe({ mutableList ->
                 Repository.items.clear();
                 mutableList.forEach { item ->
-                    Repository.items.add(0, ClipboardItem(item.textContent, FileTokenData.createUrl(item.imageContentUrl)))
+                    insertNewItem(item)
                 }
                 adapter.notifyDataSetChanged();
                 swipeContainer.isRefreshing = false;
@@ -143,12 +156,25 @@ class BrowseActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE) {
-            val uri = data?.data
-            val stream = this.contentResolver.openInputStream(uri!!)
-            var drawable = Drawable.createFromStream(stream, uri.toString())
 
-//            Repository.items.add(ClipboardItem("", drawable))
-            adapter.notifyDataSetChanged()
+            val uri = data?.data ?: return
+            val stream = this.contentResolver.openInputStream(uri!!)
+            val bitmap = BitmapFactory.decodeStream(stream)
+            val bos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
+            val bitmapData = bos.toByteArray()
+            val mediaType = MediaType.parse("image/png")
+            val requestBody = RequestBody.create(mediaType, bitmapData)
+            this.clipboardApi.clipboardPostFilePost(requestBody, ".png")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), false)
+                .subscribe({ result ->
+                    this.insertNewItem(result)
+                    adapter.notifyDataSetChanged()
+                }, { error ->
+                    Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
+                        .setAction("Paste", null).show()
+                })
         }
     }
 }

@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun TryLogin() {
-        val api = ApiClient("http")
-            .setCredentials(username.text.toString(), password.text.toString())
-            .createService(ClipboardApi::class.java)
+        val client = ApiClient("http")
+            .setCredentials(username.text.toString(), password.text.toString());
+        val api = client.createService(ClipboardApi::class.java)
 
         api.clipboardAuthorizeGet()
             .subscribeOn(Schedulers.io())

@@ -26,19 +26,25 @@ import java.util.UUID;
  * ClipboardGetData
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-03-18T07:58:16.953Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-04-20T22:57:25.528Z[GMT]")
 public class ClipboardGetData {
   @SerializedName("contentTypeId")
   private UUID contentTypeId = null;
 
+  @SerializedName("fileContentUrl")
+  private String fileContentUrl = null;
+
   @SerializedName("id")
   private UUID id = null;
 
-  @SerializedName("imageContentUrl")
-  private String imageContentUrl = null;
-
   @SerializedName("textContent")
   private String textContent = null;
+
+  @SerializedName("fileName")
+  private String fileName = null;
+
+  @SerializedName("mimeType")
+  private String mimeType = null;
 
    /**
    * Get contentTypeId
@@ -47,6 +53,15 @@ public class ClipboardGetData {
   @Schema(description = "")
   public UUID getContentTypeId() {
     return contentTypeId;
+  }
+
+   /**
+   * Get fileContentUrl
+   * @return fileContentUrl
+  **/
+  @Schema(description = "")
+  public String getFileContentUrl() {
+    return fileContentUrl;
   }
 
    /**
@@ -59,21 +74,30 @@ public class ClipboardGetData {
   }
 
    /**
-   * Get imageContentUrl
-   * @return imageContentUrl
-  **/
-  @Schema(description = "")
-  public String getImageContentUrl() {
-    return imageContentUrl;
-  }
-
-   /**
    * Get textContent
    * @return textContent
   **/
   @Schema(description = "")
   public String getTextContent() {
     return textContent;
+  }
+
+   /**
+   * Get fileName
+   * @return fileName
+  **/
+  @Schema(description = "")
+  public String getFileName() {
+    return fileName;
+  }
+
+   /**
+   * Get mimeType
+   * @return mimeType
+  **/
+  @Schema(description = "")
+  public String getMimeType() {
+    return mimeType;
   }
 
 
@@ -87,14 +111,16 @@ public class ClipboardGetData {
     }
     ClipboardGetData clipboardGetData = (ClipboardGetData) o;
     return Objects.equals(this.contentTypeId, clipboardGetData.contentTypeId) &&
+        Objects.equals(this.fileContentUrl, clipboardGetData.fileContentUrl) &&
         Objects.equals(this.id, clipboardGetData.id) &&
-        Objects.equals(this.imageContentUrl, clipboardGetData.imageContentUrl) &&
-        Objects.equals(this.textContent, clipboardGetData.textContent);
+        Objects.equals(this.textContent, clipboardGetData.textContent) &&
+        Objects.equals(this.fileName, clipboardGetData.fileName) &&
+        Objects.equals(this.mimeType, clipboardGetData.mimeType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contentTypeId, id, imageContentUrl, textContent);
+    return Objects.hash(contentTypeId, fileContentUrl, id, textContent, fileName, mimeType);
   }
 
 
@@ -104,9 +130,11 @@ public class ClipboardGetData {
     sb.append("class ClipboardGetData {\n");
     
     sb.append("    contentTypeId: ").append(toIndentedString(contentTypeId)).append("\n");
+    sb.append("    fileContentUrl: ").append(toIndentedString(fileContentUrl)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    imageContentUrl: ").append(toIndentedString(imageContentUrl)).append("\n");
     sb.append("    textContent: ").append(toIndentedString(textContent)).append("\n");
+    sb.append("    fileName: ").append(toIndentedString(fileName)).append("\n");
+    sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -23,6 +23,7 @@ class ItemAdapter(
     class ItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.item_title)
         val imageView: ImageView = view.findViewById(R.id.item_image)
+        val fileIcon: ImageView = view.findViewById(R.id.file_icon)
         val ListItem: ListItem = view as ListItem
     }
 
@@ -42,18 +43,29 @@ class ItemAdapter(
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = dataset[position]
         holder.textView.visibility = if (TextUtils.isEmpty(item.name)) View.GONE else View.VISIBLE
-        holder.textView.text = item.name
 
-        if (TextUtils.isEmpty(item.imageUrl))
+        if(item.contentTypeId == ContentTypes.PlainText)
         {
             holder.imageView.visibility = View.GONE
+            holder.textView.visibility = View.VISIBLE
+            holder.textView.text = item.name
+            holder.fileIcon.visibility = View.GONE
         }
-        else
+        else if (item.contentTypeId == ContentTypes.Image)
         {
             holder.imageView.visibility = View.VISIBLE
+            holder.textView.visibility = View.GONE
             Glide.with(holder.view)
-                 .load(item.imageUrl.toString())
+                 .load(item.fileUrl.toString())
                  .into(holder.imageView);
+            holder.fileIcon.visibility = View.GONE
+        }
+        else if (item.contentTypeId == ContentTypes.File)
+        {
+            holder.imageView.visibility = View.GONE
+            holder.textView.visibility = View.VISIBLE
+            holder.textView.text = item.fileName
+            holder.fileIcon.visibility = View.VISIBLE
         }
 
         holder.ListItem.item = item
