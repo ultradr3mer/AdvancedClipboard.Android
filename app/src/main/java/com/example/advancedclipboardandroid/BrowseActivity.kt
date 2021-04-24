@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +26,7 @@ import okhttp3.RequestBody
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 class BrowseActivity : AppCompatActivity() {
 
@@ -32,6 +35,7 @@ class BrowseActivity : AppCompatActivity() {
     private lateinit var clipboardApi: ClipboardApi
     private lateinit var swipeContainer: SwipeRefreshLayout
     val PICK_IMAGE = 1
+    val PICK_FILE = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,10 +92,19 @@ class BrowseActivity : AppCompatActivity() {
             startActivityForResult(chooserIntent, PICK_IMAGE)
         }
 
+        file.setOnClickListener { view ->
+            val getIntent = Intent(Intent.ACTION_GET_CONTENT)
+            getIntent.type = "*/*"
+
+            val chooserIntent = Intent.createChooser(getIntent, "Select File")
+
+            startActivityForResult(chooserIntent, PICK_FILE)
+        }
+
         swipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
-        swipeContainer.setOnRefreshListener({
+        swipeContainer.setOnRefreshListener {
             loadItems()
-        })
+        }
     }
 
     private fun insertNewItem(item: ClipboardGetData) {
@@ -156,7 +169,6 @@ class BrowseActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE) {
-
             val uri = data?.data ?: return
             val stream = this.contentResolver.openInputStream(uri!!)
             val bitmap = BitmapFactory.decodeStream(stream)
@@ -176,5 +188,38 @@ class BrowseActivity : AppCompatActivity() {
                         .setAction("Paste", null).show()
                 })
         }
+        else if (requestCode == PICK_FILE)
+        {
+            val uri = data?.data ?: return
+            val path = this.getFilename(uri)
+            val stream = this.contentResolver.openInputStream(uri!!)
+
+            val mediaType = MediaType.parse("*/*")
+            val requestBody = RequestBody.create(mediaType, stream?.readBytes())
+            this.clipboardApi.clipboardPostNamedFilePost(requestBody, File(path).name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread(), false)
+                .subscribe({ result ->
+                    this.insertNewItem(result)
+                    adapter.notifyDataSetChanged()
+                }, { error ->
+                    Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
+                        .setAction("Paste", null).show()
+                })
+        }
+    }
+
+    private fun getFilename(uri: Uri): String? {
+        val cursor = this?.contentResolver?.query(uri, null, null, null, null)
+        var filename: String? = null
+
+        cursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)?.let { nameIndex ->
+            cursor.moveToFirst()
+
+            filename = cursor.getString(nameIndex)
+            cursor.close()
+        }
+
+        return filename
     }
 }

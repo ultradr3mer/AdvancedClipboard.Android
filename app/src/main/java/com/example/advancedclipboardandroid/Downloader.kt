@@ -6,15 +6,9 @@ import rx.Observable
 import java.io.File
 import java.net.HttpURLConnection
 
-object Downloader {
-
-    public var mime: String? = null
-        get() {
-            return  field
-        }
-        set(value) {
-            field = value
-        }
+class Downloader(val url: String, val file: File)
+{
+    var mime: String? = null;
 
     private var okHttpClient: OkHttpClient
 
@@ -25,7 +19,7 @@ object Downloader {
         this.okHttpClient = okHttpBuilder.build()
     }
 
-    fun download(url: String, file: File): Observable<Int> {
+    fun download(): Observable<Int> {
         return Observable.unsafeCreate<Int> { emitter ->
             val request = Request.Builder().url(url).build()
             val response = okHttpClient.newCall(request).execute()

@@ -62,7 +62,8 @@ class ListItem : MaterialCardView, RequestListener<Bitmap> {
                     this.context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                     item.fileName
                 )
-                Downloader.download(item.fileUrl!!, file)
+                val downloader = Downloader(item.fileUrl!!, file)
+                downloader.download()
                     .throttleFirst(2, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -71,19 +72,19 @@ class ListItem : MaterialCardView, RequestListener<Bitmap> {
                     }, {
                         reportError(it)
                     }, {
-                        showFile(file)
+                        showFile(file, downloader.mime)
                     })
             }
         }
     }
 
-    private fun showFile(file: File) {
+    private fun showFile(file: File, mime: String?) {
         var fileUri =  FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
 
         // Construct a ShareIntent with link to file
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        intent.type = Downloader.mime
+        intent.type = mime
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         // Launch sharing dialog for file
