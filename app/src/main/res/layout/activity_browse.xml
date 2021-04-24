@@ -36,6 +36,7 @@
             android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="32dp"
             app:srcCompat="@drawable/ic_add_white_24dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,6 +50,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/add"
+            app:maxImageSize="32dp"
             app:srcCompat="@drawable/ic_baseline_add_photo_white_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -62,7 +64,22 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image"
+            app:maxImageSize="32dp"
             app:srcCompat="@drawable/outline_note_add_white_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/write"
+            android:layout_width="313dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/file"
+            app:maxImageSize="32dp"
+            app:srcCompat="@drawable/outline_create_white_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

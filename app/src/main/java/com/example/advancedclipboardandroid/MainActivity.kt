@@ -17,7 +17,6 @@ import rx.schedulers.Schedulers
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private val loginVerification = LoginVerification()
 
     private lateinit var username: EditText
     private lateinit var password: EditText

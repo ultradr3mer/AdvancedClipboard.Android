@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import io.swagger.client.api.ClipboardApi
-import io.swagger.client.model.ClipboardGetData
 import io.swagger.client.model.ClipboardPostPlainTextData
 import kotlinx.android.synthetic.main.activity_browse.*
 import kotlinx.android.synthetic.main.content_browse.*
@@ -68,7 +67,7 @@ class BrowseActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), false)
                 .subscribe({ result ->
-                    insertNewItem(result)
+                    Repository.insertNewItem(result)
                     adapter.notifyDataSetChanged()
                 }, { error ->
                     Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
@@ -101,21 +100,15 @@ class BrowseActivity : AppCompatActivity() {
             startActivityForResult(chooserIntent, PICK_FILE)
         }
 
+        write.setOnClickListener { view ->
+            val activityIntent = Intent(this, TextInputActivity::class.java)
+            startActivity(activityIntent)
+        }
+
         swipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         swipeContainer.setOnRefreshListener {
             loadItems()
         }
-    }
-
-    private fun insertNewItem(item: ClipboardGetData) {
-        Repository.items.add(
-            0, ClipboardItem(
-                item.contentTypeId,
-                item.textContent,
-                FileTokenData.createUrl(item.fileContentUrl),
-                item.fileName
-            )
-        )
     }
 
     private fun loadItems() {
@@ -125,7 +118,7 @@ class BrowseActivity : AppCompatActivity() {
             .subscribe({ mutableList ->
                 Repository.items.clear();
                 mutableList.forEach { item ->
-                    insertNewItem(item)
+                    Repository.insertNewItem(item)
                 }
                 adapter.notifyDataSetChanged();
                 swipeContainer.isRefreshing = false;
@@ -181,7 +174,7 @@ class BrowseActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), false)
                 .subscribe({ result ->
-                    this.insertNewItem(result)
+                    Repository.insertNewItem(result)
                     adapter.notifyDataSetChanged()
                 }, { error ->
                     Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
@@ -200,7 +193,7 @@ class BrowseActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread(), false)
                 .subscribe({ result ->
-                    this.insertNewItem(result)
+                    Repository.insertNewItem(result)
                     adapter.notifyDataSetChanged()
                 }, { error ->
                     Snackbar.make(recycler_view, error.message.toString(), Snackbar.LENGTH_LONG)
